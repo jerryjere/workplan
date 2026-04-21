@@ -1,0 +1,43 @@
+✅ 1. Run locally (optional but recommended)
+pip install -r requirements.txt
+pytest -v
+
+👉 Expected:
+
+2 passed in 0.xx seconds
+✅ 2. Initialize Git (if not already)
+git init
+git add .
+git commit -m "Initial commit for CI pipeline"
+✅ 3. Connect to GitHub repo
+git remote add origin https://github.com/<username>/<repo-name>.git
+git branch -M main
+✅ 4. Push code (triggers pipeline)
+git push -u origin main
+
+👉 This automatically triggers GitHub Actions 🚀
+
+✅ 5. Verify pipeline
+Go to GitHub → Actions tab
+Open workflow: Python Build & Test
+You should see:
+2 passed
+Status: ✅ Green
+🔁 6. After making changes (repeat)
+git add .
+git commit -m "update code"
+git push
+
+👉 Pipeline runs again automatically
+
+🎯 Full Command Summary (Exam Ready)
+pip install -r requirements.txt
+pytest -v
+
+git init
+git add .
+git commit -m "Initial commit"
+
+git remote add origin https://github.com/<username>/<repo>.git
+git branch -M main
+git push -u origin main

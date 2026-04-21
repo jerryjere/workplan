@@ -1,0 +1,4 @@
+
+Repo → Settings → Secrets and variables → Actions → New repository secret:
+DOCKER_USERNAME — your Docker Hub username
+DOCKER_PASSWORD — your Docker Hub access token

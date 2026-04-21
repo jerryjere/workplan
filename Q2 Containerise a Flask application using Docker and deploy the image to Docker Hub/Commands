@@ -1,0 +1,11 @@
+# Build image
+docker build -t devopslab1218/flask-app:latest .
+
+# Run container
+docker run -d -p 5000:5000 devopslab1218/flask-app:latest
+
+# Login
+docker login
+
+# Push to Docker Hub
+docker push devopslab1218/flask-app:latest

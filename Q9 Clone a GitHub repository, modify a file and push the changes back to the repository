@@ -1,0 +1,21 @@
+# Clone repo
+git clone https://github.com/<username>/<repo-name>.git
+cd <repo-name>
+
+# Modify file
+echo "Updated content" >> README.md
+cat README.md
+git diff
+
+# Stage & commit
+git add README.md
+git commit -m "docs: update README with new content"
+
+# Pull latest (safe)
+git pull origin main
+
+# Push changes
+git push origin main
+
+# View history
+git log --oneline -3
