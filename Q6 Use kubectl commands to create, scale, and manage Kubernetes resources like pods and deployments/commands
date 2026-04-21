@@ -1,0 +1,49 @@
+✔️ Option 2: Using Minikube
+
+If you installed Minikube:
+
+minikube start
+✅ Verify cluster is running
+kubectl cluster-info
+Expected:
+
+Kubernetes control plane is running
+✅ Fix context (important)
+kubectl config get-contexts
+
+Switch to correct one:
+
+kubectl config use-context docker-desktop
+
+
+
+
+# Create deployment
+kubectl create deployment myapp --image=nginx:latest
+
+# Check
+kubectl get deployments
+kubectl get pods
+
+# Scale
+kubectl scale deployment myapp --replicas=3
+kubectl get pods
+
+kubectl scale deployment myapp --replicas=1
+
+# Expose
+kubectl expose deployment myapp --port=80 --type=NodePort
+kubectl get svc myapp
+
+# Debug
+kubectl get pods
+kubectl describe pod <pod-name>
+kubectl logs <pod-name>
+
+# YAML
+kubectl apply -f deployment.yaml
+kubectl get all
+
+# Cleanup
+kubectl delete deployment myapp
+kubectl delete service myapp

@@ -1,0 +1,59 @@
+✅ 1. Prerequisites (one-time)
+
+In your GitHub repo:
+
+Settings → Secrets and variables → Actions → New repository secret
+
+Add:
+
+DOCKER_USERNAME → devopslab1218
+DOCKER_PASSWORD → (Docker Hub Access Token, not password)
+✅ 2. Workflow file
+
+Create:
+
+.github/workflows/build-push.yml
+
+✅ 4. Required project files
+
+Your repo must contain:
+
+project/
+│── app.py
+│── requirements.txt
+│── Dockerfile   ✅
+│── .github/workflows/build-push.yml
+
+✅ 5. Dockerfile (required)
+FROM python:3.11-slim
+
+WORKDIR /app
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+
+EXPOSE 5000
+
+CMD ["python", "app.py"]
+✅ 6. requirements.txt
+flask
+🚀 7. What happens
+
+When you push:
+
+git add .
+git commit -m "add CI pipeline"
+git push
+
+👉 GitHub Actions will:
+
+Checkout code
+Set up Buildx
+Build Docker image
+Push to Docker Hub
+✅ Expected Output
+GitHub → Actions tab → Green check ✅
+Docker Hub:
+devopslab1218/python-app:latest
