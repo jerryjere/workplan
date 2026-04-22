@@ -1,0 +1,134 @@
+✅ Step 1 – Start Jenkins in Docker
+🔹 Create volume
+docker volume create jenkins-data
+🔹 Run Jenkins (Windows → single line)
+docker run -d --name jenkins -p 8080:8080 -p 50000:50000 -v jenkins-data:/var/jenkins_home -v /var/run/docker.sock:/var/run/docker.sock jenkins/jenkins:lts
+✅ Step 2 – Get Admin Password
+docker exec jenkins cat /var/jenkins_home/secrets/initialAdminPassword
+
+👉 Copy password
+👉 Open browser:
+
+http://localhost:8080
+Paste password
+Click Install suggested plugins
+✅ Step 3 – Install Required Plugin
+
+Go to:
+
+Manage Jenkins → Manage Plugins
+
+Install:
+
+Docker Pipeline Plugin
+✅ Step 4 – Install Docker inside Jenkins
+docker exec -u root jenkins bash -c "apt-get update && apt-get install -y docker.io"
+
+👉 Fix permission (important):
+
+docker exec -u root jenkins chmod 666 /var/run/docker.sock
+✅ Step 5 – Add Docker Hub Credentials
+
+Go to:
+
+Manage Jenkins → Credentials → (global) → Add Credentials
+
+Fill:
+
+Kind: Username with password
+Username: devopslab1218
+Password: Docker Hub Access Token
+ID:
+dockerhub-creds
+✅ Step 6 – Add Jenkinsfile to GitHub Repo
+
+Create file in your project root:
+
+pipeline {
+    agent any
+
+    environment {
+        IMAGE_NAME = "myapp"
+        DOCKER_HUB_USER = "devopslab1218"
+    }
+
+    stages {
+        stage('Clone') {
+            steps {
+                git url: 'https://github.com/<username>/<repo>.git', branch: 'main'
+            }
+        }
+
+        stage('Build Image') {
+            steps {
+                sh 'docker build -t $DOCKER_HUB_USER/$IMAGE_NAME:latest .'
+            }
+        }
+
+        stage('Push Image') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub-creds',
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                )]) {
+                    sh '''
+                    echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+                    docker push $DOCKER_HUB_USER/$IMAGE_NAME:latest
+                    '''
+                }
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                sh '''
+                docker rm -f myapp || true
+                docker run -d -p 5000:5000 --name myapp $DOCKER_HUB_USER/$IMAGE_NAME:latest
+                '''
+            }
+        }
+    }
+}
+
+👉 Push this file to GitHub
+
+✅ Step 7 – Create Jenkins Pipeline Job
+Go to Jenkins Dashboard
+Click New Item
+Enter name → select Pipeline
+Click OK
+✅ Step 8 – Configure Pipeline
+
+In job:
+
+Scroll to Pipeline section
+Select:
+Pipeline script from SCM
+SCM → Git
+Repo URL:
+https://github.com/<username>/<repo>.git
+Branch:
+main
+
+Click Save
+
+✅ Step 9 – Run Pipeline
+
+Click:
+
+Build Now
+✅ Step 10 – Verify Output
+
+In Console Output:
+
+✔️ Clone
+✔️ Build
+✔️ Push
+✔️ Deploy
+
+✅ Step 11 – Check Result
+Docker Hub:
+devopslab1218/myapp:latest
+Browser:
+http://localhost:5000
